@@ -1,6 +1,6 @@
 {
   "port": 8080,
-  "domain": "herokuapp.com",
+  "domain": "https://hw5-nodejs.herokuapp.com/",
   "app-static": "./dist",
   "defultUser": {
     "access_token": "123",
