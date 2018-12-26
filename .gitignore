@@ -4,7 +4,6 @@
 *.log
 *.pdf
 *.psd
-package-lock.json
 *.sublime*
 node_modules/
 
