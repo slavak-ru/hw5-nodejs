@@ -21,8 +21,8 @@
   "deleteUserNews": false,
   "userHashLength": 15,
   "mongo": {
-    "url": "mongodb://localhost:27017/",
-    "baseName": "undefinedSystem"
+    "url": "mongodb://user:password123@ds019482.mlab.com:19482/",
+    "baseName": "hw5-nodejs"
   },
   "session": {
     "secret": "$eCret@",
