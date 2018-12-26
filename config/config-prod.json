@@ -1,0 +1,58 @@
+{
+  "port": 5000,
+  "domain": "localhost",
+  "app-static": "./dist",
+  "defultUser": {
+    "access_token": "123",
+    "firstName": "userFirstName",
+    "id": "123",
+    "image": "../../assets/img/no-user-image.png",
+    "middleName": "userMiddleName",
+    "password": "password",
+    "permission": {
+      "chat": { "C": false, "R": true, "U": false, "D": false },
+      "news": { "C": false, "R": true, "U": false, "D": false },
+      "setting": { "C": false, "R": true, "U": false, "D": false }
+    },
+    "permissionId": "123",
+    "surName": "userSurName",
+    "username": "Пользователь удален"
+  },
+  "deleteUserNews": false,
+  "userHashLength": 15,
+  "mongo": {
+    "url": "mongodb://localhost:27017/",
+    "baseName": "undefinedSystem"
+  },
+  "session": {
+    "secret": "$eCret@",
+    "key": "keys",
+    "tokenMaxAge": 3600000,
+    "maxAge": 3600000
+  },
+  "maxUploadSize": 1000000,
+  "uploadPath": "../../assets/img/",
+  "MIME": [
+    "jpg",
+    "jpeg",
+    "gif",
+    "png",
+    "tiff",
+    "webp"
+  ],
+  "mail": {
+    "subject": "Сообщение с сайта",
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "secure": true,
+      "auth": {
+        "user": "slavak.rus@gmail.com",
+        "pass": "gppeyotmwnnfngfd"
+      },
+      "tls": {
+        "rejectUnauthorized": false
+      }
+    }
+  }
+}
