@@ -1,6 +1,6 @@
 {
-  "port": 5000,
-  "domain": "localhost",
+  "port": 8080,
+  "domain": "herokuapp.com",
   "app-static": "./dist",
   "defultUser": {
     "access_token": "123",

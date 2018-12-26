@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore sessions/ app.js",
+    "start": "node app.js",
     "app:dev": "set NODE_ENV=development && nodemon --ignore sessions/ app.js",
     "app": "set NODE_ENV=development && node --inspect app"
   },

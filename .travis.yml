@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "stable"
+
+script:
+  - npm run start
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: $key
+    strategy: git
+  app:
+    master: hw5-nodejs
+    production: hw5-nodejs
+  run:
+    - start
