@@ -6,9 +6,9 @@ node_js:
 deploy:
   provider: heroku
   api_key:
-    secure: HE_KEY
-    strategy: git
+    secure: $he
+  strategy: git    
   app:
     master: hw5-nodejs
   run:
-    - start
+    - restart
