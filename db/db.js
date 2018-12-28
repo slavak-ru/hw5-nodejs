@@ -1,7 +1,8 @@
 function connectDB() {
   const conf = require('../config');
-  const url = $mongoURL;
-  // const url = conf.get('mongo').url;
+  // const url = $mongoURL;
+  const url = conf.get('mongo').url;
+  console.log($mongoURL)
   const baseName = conf.get('mongo').baseName;
   const MongoClient = require('mongodb').MongoClient;
   const mongoClient = new MongoClient(url, { useNewUrlParser: true });
