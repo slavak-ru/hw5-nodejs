@@ -1,3 +1,4 @@
+// модуль использовался для связи с MongoDB без использования Mongoose и схем
 function connectDB() {
   const conf = require('../config');
   const url = conf.get('mongo').url;
