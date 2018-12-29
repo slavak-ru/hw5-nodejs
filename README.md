@@ -2,9 +2,13 @@
 ## Задача - реализовать backend часть.
 ## <b>Frontend (vue.js) не мой</b>. Получил as-is. По этой причине клиент не работает в IE11, так как клиентский скрипт использует fetch без полифилла, есть клиентские проблемы с роутингом, верстка не адаптивная (не адаптирована для моб.устройств).
 ## <b>Деплой осуществлен на Heroku через Travis. [Демо](https://hw5-nodejs.herokuapp.com)</b>
+Созданные пользователи:  
+1. userName: admin; password: admin; С максимальными правами.
+2. userName: user; password: user  
+
 Аккаунт на Heroku бесплатный - старт приложения занимает несколько секунд  
   
-  
+
 <b>Использованный фреймворк</b> - Express.js.
 Настройки сервера хрантся в config/config-dev.json для development-mode, config/config-prod.json для production-mode
 
