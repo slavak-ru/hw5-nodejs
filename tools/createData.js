@@ -24,7 +24,6 @@ exports.registrationData = (user) => {
   let hashPsw = psw.setHashPassword(user.password, userId);
   let createdAt = new Date().toLocaleString();
   let baseDataUser = {};
-  let baseDataPermission = {};
   let clientData = {};
 
   baseDataUser.username = user.username;
@@ -35,22 +34,21 @@ exports.registrationData = (user) => {
   baseDataUser.img = (user.img)? user.img : '../../assets/img/no-user-image.png';
   baseDataUser.hash = hashPsw;
   baseDataUser.createdAt = createdAt;
-  
-  baseDataPermission.userId = userId;
-  baseDataPermission.permission = user.permission;
+  baseDataUser.permissionId = userId;
+  baseDataUser.permission = user.permission;
 
   clientData['access_token'] = createToken(user.userId);
   clientData.firstName = user.firstName;
   clientData.id = userId;
   clientData.image = (user.img)? user.img : '../../assets/img/no-user-image.png';
   clientData.middleName = user.middleName;
-  clientData.password = user.password;
+  clientData.password = 'password';
   clientData.permission = user.permission;
   clientData.permissionId = userId;
   clientData.surName = user.surName;
   clientData.username = user.username;
 
-  return { baseDataUser: baseDataUser, baseDataPermission: baseDataPermission, clientData: clientData };
+  return { baseDataUser: baseDataUser, clientData: clientData };
 };
 
 exports.newsData = user => {

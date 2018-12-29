@@ -1,6 +1,6 @@
 module.exports = (req, res, next) => {
   const conf = require('../config');
-  const db = require('../db/db');
+  const db = require('../db');
   const createData = require('../tools/createData');
 
   console.log(`main.js method: ${req.method} ulr: ${req.url}`);
@@ -11,12 +11,8 @@ module.exports = (req, res, next) => {
       .sendFile('index.html', { root: conf.get('app-static') });
   }
 
-  console.log(`userId: ${req.session.passport.user}`)
-  db.getItem('user', { userId: req.session.passport.user })
+  db.getItem('users', { userId: req.session.passport.user })
     .then(user => {
-      db.getItem('permission', { userId: user.userId }).then(permission => {
-        user.permission = permission.permission;
-        user.permissionId = permission.userId;
         let userData = createData.loginData(user);
 
         req.login(userData, err => {
@@ -24,7 +20,6 @@ module.exports = (req, res, next) => {
           return res.status(200).redirect('/');
           //return res.status(200).send(JSON.stringify(userData));
         });
-      });
     })
     .catch(err => console.log(err.message));
 };

@@ -1,4 +1,4 @@
-const db = require('../db/db');
+const db = require('../db');
 const createData = require('../tools/createData');
 const conf = require('../config');
 
@@ -18,7 +18,7 @@ exports.postNews = (req, res) => {
     date: req.body.date,
   };
 
-  db.addItem(news, 'news')
+  db.addItem('news', news)
     .then(response => {
       if (response.status) {
         getNewsAndUsers(res);
@@ -33,10 +33,11 @@ exports.postNews = (req, res) => {
 };
 
 exports.updateNews = (req, res) => {
-  let news = req.body;
-  let newsDate = { date: news.date };
-  db.updateItem(newsDate, news, 'news')
+  let newsUpdated = req.body;
+  let newsDate = { id: newsUpdated.id };
+  db.updateItem('news', newsDate, newsUpdated)
     .then(response => {
+      console.log(response)
       if (response.status) {
         getNewsAndUsers(res);
       }
@@ -51,7 +52,7 @@ exports.updateNews = (req, res) => {
 
 exports.deleteNews = (req, res) => {
   const newsId = { id: req.params.id };
-  db.deleteItem(newsId, 'news')
+  db.deleteItem('news', newsId)
     .then(response => {
       if (response.status) {
         getNewsAndUsers(res);
@@ -67,27 +68,33 @@ exports.deleteNews = (req, res) => {
 
 function getNewsAndUsers(res) {
   const defultUser = conf.get('defultUser');
+  const response = [];
   return db
     .getAll('news')
     .then(newsAll => {
+
       if (!newsAll.length) {
         return res.status(200).send(newsAll);
       }
-      db.getAll('user')
+      
+      db.getAll('users')
         .then(users => {
+
           newsAll.forEach(news => {
+            
+            let currentNews = {id: news.id, authorId: news.authorId, text: news.text, theme: news.theme, date: news.date
+            };
+
             users.forEach(user => {
               if (news.authorId !== user.userId) return;
               let userData = createData.newsData(user);
-              news.user = userData;
+              currentNews.user = userData;
             });
-            if (!news.user) news.user = defultUser;
-          });
+            if(!currentNews.user) currentNews.user = defultUser;
 
-          return newsAll;
-        })
-        .then(newsAll => {
-          return res.status(200).send(newsAll);
+            response.push(currentNews);
+          });
+          return res.status(200).send(response);
         })
         .catch(err => {
           console.log(err.message);

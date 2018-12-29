@@ -1,4 +1,4 @@
-const db = require('../db/db');
+const db = require('../db');
 const createData = require('../tools/createData').loginData;
 const conf = require('../config');
 
@@ -10,10 +10,10 @@ exports.updateUserPermission = (req, res) => {
   const itemParam = { userId: req.body.permissionId };
   const newPermission = req.body.permission;
 
-  db.getItem('permission', itemParam)
-    .then(userPermission => {
-      const permission = userPermission.permission;
 
+  db.getItem('users', itemParam)
+    .then(user => {
+      const permission = user[0].permission;
       for (let key in newPermission) {
         if (typeof newPermission[key] === 'object') {
           Object.keys(newPermission[key]).forEach(val => {
@@ -22,10 +22,9 @@ exports.updateUserPermission = (req, res) => {
         }
       }
 
-      db.updateItem(itemParam, { permission: permission }, 'permission').then(
+      db.updateItem('users', itemParam, { permission: permission }).then(
         result => {
           if (!result.status) {
-            console.log(result.message);
             return res
               .status(500)
               .send(`Ошибка базы данных: ${result.message}`);
@@ -61,7 +60,7 @@ exports.updateUser = (req, res) => {
     }
     changedFields[key] = req.body[key];
   });
-  updateItemAndGetItem(res, itemParam, changedFields, 'user');
+  updateItemAndGetItem(res, itemParam, changedFields, 'users');
 };
 
 exports.saveUserImage = (req, res) => {
@@ -109,7 +108,7 @@ exports.saveUserImage = (req, res) => {
       // saveFile({ oldPath: filePath, newPath: fileNewPath }) // сохранение изображения без изменений
       .then(() => {
         const updateData = { img: `${conf.get('uploadPath')}/${fileName}` };
-        updateItemAndGetItem(res, itemParam, updateData, 'user');
+        updateItemAndGetItem(res, itemParam, updateData, 'users');
       })
       .catch(err => console.log(err.message));
   });
@@ -117,26 +116,19 @@ exports.saveUserImage = (req, res) => {
 
 exports.deleteUser = (req, res) => {
   const userId = { userId: req.params.id };
-  db.deleteItem(userId, 'user')
+  db.deleteItem('users', userId)
     .then(response => {
       if (!response.status) {
         return res.status(500).send(`Ошибка базы данных: ${response.message}`);
       }
-      db.deleteItem(userId, 'permission').then(response => {
-        if (!response.status) {
-          return res
-            .status(500)
-            .send(`Ошибка базы данных: ${response.message}`);
-        }
-        if (conf.get('deleteUserNews')) {
-          const query = { authorId: userId.userId };
-          db.deleteAllItems(query, 'news').then(result => {
-            if (!result.status)
-              res.status(500).send(`Ошибка базы данных: ${result.message}`);
-          });
-        }
-        getAllUsers(res);
-      });
+      if (conf.get('deleteUserNews')) {
+        const query = { authorId: userId.userId };
+        db.deleteAllItems(query, 'news').then(result => {
+          if (!result.status)
+            res.status(500).send(`Ошибка базы данных: ${result.message}`);
+        });
+      }
+      getAllUsers(res);
     })
     .catch(err => {
       console.log(err.message);
@@ -145,40 +137,27 @@ exports.deleteUser = (req, res) => {
 };
 
 function updateItemAndGetItem(res, itemParam, updateData, collection) {
-  db.updateItem(itemParam, updateData, collection).then(result => {
+  db.updateItem(collection, itemParam, updateData).then(result => {
     if (!result.status)
       return res.status(500).send(`Ошибка базы данных: ${result.message}`);
 
-    db.getItem(collection, itemParam)
-      .then(user => {
-        db.getItem('permission', itemParam).then(permission => {
-          user.permission = permission.permission;
-          user.permissionId = permission.userId;
-          let userData = createData(user);
-          return res.status(200).send(userData);
-        });
+      db.getItem(collection, itemParam).then(user => {
+        user = user[0];
+        let userData = createData(user);
+        return res.status(200).send(userData);
       })
-      .catch(err => console.log(err.message));
   });
 }
 
 function getAllUsers(res) {
-  db.getAll('user')
+  db.getAll('users')
     .then(usersData => {
-      db.getAll('permission').then(permissionsData => {
-        let clientData = [];
-        usersData.forEach(user => {
-          permissionsData.forEach(permission => {
-            if (user.userId !== permission.userId) return;
-            user.permission = permission.permission;
-            user.permissionId = permission.userId;
-          });
-          let userData = createData(user);
-          clientData.push(userData);
-        });
-
-        return res.status(200).send(clientData);
+      let clientData = [];
+      usersData.forEach(user => {
+        let userData = createData(user);
+        clientData.push(userData);
       });
+      return res.status(200).send(clientData);
     })
     .catch(err => console.log(err.message));
 }

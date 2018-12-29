@@ -24,6 +24,7 @@
     "url": "mongodb://localhost:27017/",
     "baseName": "undefinedSystem"
   },
+  "mongooseURL": "mongodb://localhost:27017/undefinedSystem",
   "session": {
     "secret": "$eCret@",
     "key": "keys",

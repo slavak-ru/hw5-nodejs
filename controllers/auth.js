@@ -1,4 +1,4 @@
-const db = require('../db/db');
+const db = require('../db');
 const createData = require('../tools/createData');
 const passport = require('passport');
 require('../config/config-passport');
@@ -6,9 +6,9 @@ require('../config/config-passport');
 exports.registration = (req, res) => {
   const newUser = req.body;
   const dbQuery = { username: newUser.username };
-  db.getItem('user', dbQuery)
+  db.getItem('users', dbQuery)
     .then(result => {
-      if (result) {
+      if (result[0]) {
         const message = 'Пользователь с таким логином уже существует';
         req.flash('message', 'Пользователь с таким логином уже существует');
         return res.status(200).send(JSON.stringify(message));
@@ -16,26 +16,20 @@ exports.registration = (req, res) => {
 
       let {
         baseDataUser,
-        baseDataPermission,
+        // baseDataPermission,
         clientData,
       } = createData.registrationData(newUser);
 
-      db.addItem(baseDataUser, 'user').then(result => {
+      db.addItem('users', baseDataUser).then(result => {
         if (!result.status) {
           return res.status(500).send(result.message);
         }
-        db.addItem(baseDataPermission, 'permission').then(result => {
-          if (!result.status) {
-            req.flash('message', result.message);
-            return res.status(500).send(result.message);
-          }
 
           req.login(clientData, err => {
             if (err) console.log(err.message);
             return res.status(200).send(JSON.stringify(clientData));
           });
         });
-      });
     })
     .catch(err => {
       console.log(err.message);
@@ -52,25 +46,12 @@ exports.login = (req, res, next) => {
       req.flash('message', info.message);
       return res.status(404).send(JSON.stringify(info.message));
     }
+    let userData = createData.loginData(user);
+    req.login(userData, err => {
+      if (err) console.log(err.message);
+      return res.status(200).send(JSON.stringify(userData));
+    });
 
-    db.getItem('permission', { userId: user.userId })
-      .then(permission => {
-        if (!permission) {
-          const message = 'Такого пользователя не существует';
-          req.flash('message', message);
-
-          return res.status(404).send(JSON.stringify(message));
-        }
-        user.permission = permission.permission;
-        user.permissionId = permission.userId;
-        let userData = createData.loginData(user);
-
-        req.login(userData, err => {
-          if (err) console.log(err.message);
-          return res.status(200).send(JSON.stringify(userData));
-        });
-      })
-      .catch(err => console.log(err.message));
   })(req, res, next);
 };
 
