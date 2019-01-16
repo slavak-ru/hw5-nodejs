@@ -16,7 +16,6 @@ exports.registration = (req, res) => {
 
       let {
         baseDataUser,
-        // baseDataPermission,
         clientData,
       } = createData.registrationData(newUser);
 
