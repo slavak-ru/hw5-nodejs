@@ -92,7 +92,7 @@ exports.saveUserImage = (req, res) => {
       'img',
       fileName
     );
-
+    
     if (
       !conf.get('MIME').includes(fileExt) ||
       conf.get('maxUploadSize') < fileSize
@@ -107,7 +107,7 @@ exports.saveUserImage = (req, res) => {
     imageProcessing({ oldPath: filePath, newPath: fileNewPath }) // если надо изменить изображение
       // saveFile({ oldPath: filePath, newPath: fileNewPath }) // сохранение изображения без изменений
       .then(() => {
-        const updateData = { img: `${conf.get('uploadPath')}/${fileName}` };
+        const updateData = { img: `${conf.get('uploadPath')}${fileName}` };
         updateItemAndGetItem(res, itemParam, updateData, 'users');
       })
       .catch(err => console.log(err.message));
